@@ -52,13 +52,11 @@ if not exist "%APP_DIR%\.git" (
     git -C "%APP_DIR%" pull --ff-only
 )
 
-:: ── 4. Install npm packages if needed ────────────────────────────────────────
-if not exist "%APP_DIR%\node_modules" (
-    echo Installing packages...
-    pushd "%APP_DIR%"
-    call npm install
-    popd
-)
+:: ── 4. Install npm packages ──────────────────────────────────────────────────
+echo Installing packages...
+pushd "%APP_DIR%"
+call npm install
+popd
 
 :: ── 5. Install Playwright browser if needed ──────────────────────────────────
 set PLAYWRIGHT_INSTALLED=0
@@ -74,6 +72,7 @@ if "%PLAYWRIGHT_INSTALLED%"=="0" (
 echo.
 echo Starting LeadPuller...
 pushd "%APP_DIR%"
+timeout /t 2 /nobreak >nul
 start "" http://localhost:3456
 node server.js
 popd
