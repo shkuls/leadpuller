@@ -47,7 +47,9 @@ if not exist "%APP_DIR%\node_modules" (
 )
 
 :: ── 5. Install Playwright browser if needed ──────────────────────────────────
-if not exist "%LOCALAPPDATA%\ms-playwright\chromium*" (
+set PLAYWRIGHT_INSTALLED=0
+for /d %%D in ("%LOCALAPPDATA%\ms-playwright\chromium-*") do set PLAYWRIGHT_INSTALLED=1
+if "%PLAYWRIGHT_INSTALLED%"=="0" (
     echo Installing browser ^(one-time, may take a minute^)...
     pushd "%APP_DIR%"
     call npx playwright install chromium
