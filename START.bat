@@ -4,24 +4,38 @@ setlocal
 set REPO_URL=https://github.com/shkuls/leadpuller.git
 set APP_DIR=%~dp0leadpuller
 
-:: ── 1. Check Node.js ─────────────────────────────────────────────────────────
+:: ── 1. Install Node.js if missing ────────────────────────────────────────────
 where node >nul 2>&1
 if errorlevel 1 (
-    echo Node.js is not installed. Opening the download page...
-    echo Please install Node.js ^(LTS^) and re-run this script.
-    start https://nodejs.org/en/download/
-    pause
-    exit /b 1
+    echo Node.js not found. Installing...
+    winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
+    if errorlevel 1 (
+        echo Failed to install Node.js. Please install it manually from https://nodejs.org and re-run.
+        pause
+        exit /b 1
+    )
+    :: Refresh PATH so node is available in this session
+    for /f "tokens=*" %%i in ('where node 2^>nul') do set NODE_PATH=%%i
+    if "%NODE_PATH%"=="" (
+        echo Node.js installed. Please close and re-run this script.
+        pause
+        exit /b 0
+    )
 )
 
-:: ── 2. Check Git ──────────────────────────────────────────────────────────────
+:: ── 2. Install Git if missing ─────────────────────────────────────────────────
 where git >nul 2>&1
 if errorlevel 1 (
-    echo Git is not installed. Opening the download page...
-    echo Please install Git and re-run this script.
-    start https://git-scm.com/download/win
+    echo Git not found. Installing...
+    winget install -e --id Git.Git --accept-source-agreements --accept-package-agreements
+    if errorlevel 1 (
+        echo Failed to install Git. Please install it manually from https://git-scm.com and re-run.
+        pause
+        exit /b 1
+    )
+    echo Git installed. Please close and re-run this script.
     pause
-    exit /b 1
+    exit /b 0
 )
 
 :: ── 3. Clone or pull latest code ─────────────────────────────────────────────
